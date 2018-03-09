@@ -12,80 +12,83 @@ class BooksApp extends React.Component {
       wantToReadBooks :[],
       readBooks: []
     }
+    this.handleChange = this.handleChange.bind(this);
+    this.handleGetAll = this.handleGetAll.bind(this);
   }
-  // state = {
-  //   /**
-  //    * TODO: Instead of using this state variable to keep track of which page
-  //    * we're on, use the URL in the browser's address bar. This will ensure that
-  //    * users can use the browser's back and forward buttons to navigate between
-  //    * pages, as well as provide a good URL they can bookmark and share.
-  //    */
-  //   showSearchPage: false,
-  //   bookName: ''
-  // }
+  
+  componentDidMount(){    
+    this.handleGetAll();       
+  }
+  handleChange(event, book){
+    console.log("handling change: "+ event.target.value);
+    console.log("book checker: "+book.id);
+    BooksAPI.update(book, event.target.value).then((array) =>{
+      //console.log("response: "+JSON.stringify(array.shelf));
+      this.handleGetAll();  
+    });
+  }
 
-  componentDidMount(){ 
+  handleGetAll(){
     let temp_array = [];
+    let shelf_type ="";
     let currentlyReading = [];
     let wantToRead = [];
-    let read = []
-    let typeBook =""
-    let bookName = BooksAPI.getAll().then((array) => {
-      console.log("Whole response is>>> "+JSON.stringify(array))
+    let read = [];
+    BooksAPI.getAll().then((array) => {
+      console.log("stringified response: "+JSON.stringify(array))
       array.map( (book) => {
-        typeBook = book.shelf
+        shelf_type = book.shelf
           temp_array.push(book.title)
-          console.log(">>>>>"+ typeBook)
-          if(typeBook==="currentlyReading"){
+          console.log("Shelf type: "+ shelf_type)
+          if(shelf_type === "currentlyReading"){
               currentlyReading.push({
-                id:book.id,
-			          img:book.imageLinks.thumbnail,
-                type:book.shelf,
-                title:book.title,
-                author:book.authors
+                id: book.id,
+			          img: book.imageLinks.thumbnail,
+                type: book.shelf,
+                title: book.title,
+                author: book.authors
               })
           }
-          else if(typeBook==="wantToRead"){
-            wantToRead.push({
-              id:book.id,
-              img:book.imageLinks.thumbnail,
-              type:book.shelf,
-              title:book.title,
-              author:book.authors
-            })
+          else if(shelf_type === "wantToRead"){
+              wantToRead.push({
+                id: book.id,
+                img: book.imageLinks.thumbnail,
+                type: book.shelf,
+                title: book.title,
+                author: book.authors
+              })
           }
-          else if(typeBook==="read"){
-            read.push({
-              id:book.id,
-              img:book.imageLinks.thumbnail,
-              type:book.shelf,
-              title:book.title,
-              author:book.authors
-            })
+          else if(shelf_type==="read"){
+              read.push({
+                id: book.id,
+                img: book.imageLinks.thumbnail,
+                type: book.shelf,
+                title: book.title,
+                author: book.authors
+              })
           }
           
       })
-      console.log("curr read>>>>>"+currentlyReading)
-      console.log("want to read>>>>>"+wantToRead)
-      console.log("read>>>>>"+read)
+      // console.log("Currently Reading: " + currentlyReading)
+      // console.log("Want to Read: " + wantToRead)
+      // console.log("Read: " + read)
       this.setState({
         bookNames: temp_array,
-        currentlyReadingBooks : currentlyReading,
+        currentlyReadingBooks: currentlyReading,
         wantToReadBooks: wantToRead,
-        readBooks : read
+        readBooks: read
       });
-    });       
+    })
   }
+  
 
   render() {
     let currentlyReading = this.state.currentlyReadingBooks;
     let wantToRead = this.state.wantToReadBooks;
     let read = this.state.readBooks;
-    //console.log(this.state.currentlyReadingBooks)
     //console.log("inside render: "+ book_array[0]);
     return (
       <div className="app">
-      
         {this.state.showSearchPage ? (
           <div className="search-books">
             <div className="search-books-bar">
@@ -120,16 +123,16 @@ class BooksApp extends React.Component {
                     <ol className="books-grid">
                     {currentlyReading.map(function(book, index){
                         let src = book.img
-                        console.log(src+"........")
+                        //console.log(src+"........")
                               return (
-                                <li>
+                                <li key={index}>
                         <div className="book">
                           <div className="book-top">
                             <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${src})` }}></div>
                             <div className="book-shelf-changer">
-                              <select>
+                              <select onChange={(e) => this.handleChange(e, book)} value="currentlyReading">
                                 <option value="none" disabled>Move to...</option>
-                                <option value="currentlyReading">Currently Reading</option>
+                                <option value="currentlyReading" >Currently Reading</option>
                                 <option value="wantToRead">Want to Read</option>
                                 <option value="read">Read</option>
                                 <option value="none">None</option>
@@ -143,7 +146,7 @@ class BooksApp extends React.Component {
                         </div>
                       </li>
                               );
-                            })}
+                            }, this)}
                      
                     </ol>
                   </div>
@@ -154,14 +157,14 @@ class BooksApp extends React.Component {
                     <ol className="books-grid">
                     {wantToRead.map(function(book, index){
                         let src = book.img
-                        console.log(src+"........")
+                        //console.log(src+"........")
                               return (
-                                <li>
+                                <li key={index}>
                         <div className="book">
                           <div className="book-top">
                             <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${src})` }}></div>
                             <div className="book-shelf-changer">
-                              <select>
+                              <select onChange={(e) => this.handleChange(e, book)} value="wantToRead">
                                 <option value="none" disabled>Move to...</option>
                                 <option value="currentlyReading">Currently Reading</option>
                                 <option value="wantToRead">Want to Read</option>
@@ -177,7 +180,7 @@ class BooksApp extends React.Component {
                         </div>
                       </li>
                               );
-                            })}
+                            },this)}
                      
                     </ol>
                   </div>
@@ -188,14 +191,14 @@ class BooksApp extends React.Component {
                     <ol className="books-grid">
                     {read.map(function(book, index){
                         let src = book.img
-                        console.log(src+"........")
+                        //console.log(src+"........")
                               return (
-                                <li>
+                                <li key={index}>
                         <div className="book">
                           <div className="book-top">
                             <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${src})` }}></div>
                             <div className="book-shelf-changer">
-                              <select>
+                              <select onChange={(e) => this.handleChange(e, book)} value="read">
                                 <option value="none" disabled>Move to...</option>
                                 <option value="currentlyReading">Currently Reading</option>
                                 <option value="wantToRead">Want to Read</option>
@@ -211,7 +214,7 @@ class BooksApp extends React.Component {
                         </div>
                       </li>
                               );
-                            })}
+                            }, this)}
                      
                     </ol>
                   </div>
