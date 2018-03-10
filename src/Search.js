@@ -25,13 +25,9 @@ class Search extends React.Component{
         });
     }
     handleChange(event, book){
-      //console.log("handling change: "+ event.target.value);
-      //console.log("book checker: "+book.id);
-      BooksAPI.update(book, event.target.value).then((array) =>{
-        //console.log("response: "+JSON.stringify(array.shelf));
-        this.handleGetAll();  
-      });
-    }
+      this.props.handleChange(event,book)
+      }
+    
 
     render(){
       let books = this.state.search
@@ -65,7 +61,7 @@ class Search extends React.Component{
                           <div className="book-top">
                             <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${src})` }}></div>
                             <div className="book-shelf-changer">
-                              <select value={book.shelf} onChange={(e) => this.handleChange(e, book)}>
+                              <select value="none" onChange={(e) => this.handleChange(e, book)}>
                                 <option value="none" disabled>Move to...</option>
                                 <option value="currentlyReading" >Currently Reading</option>
                                 <option value="wantToRead">Want to Read</option>
@@ -88,7 +84,6 @@ class Search extends React.Component{
                 </div>
               
               } 
-              
             </div>
           </div>
         )
