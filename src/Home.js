@@ -18,7 +18,6 @@ class BooksApp extends React.Component {
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleGetAll = this.handleGetAll.bind(this);
-    this.changeSearch = this.changeSearch.bind(this);
   }
   
   componentDidMount(){    
