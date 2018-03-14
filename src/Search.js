@@ -14,9 +14,14 @@ class Search extends React.Component{
             showSearchPage: true
         }
         this.handleSearch = this.handleSearch.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+    }
+    componentDidMount(){
+      this.setState({
+        showSearchPage:true
+      })
     }
     handleSearch(event){
-        //console.log(event.target.value);
         let query = event.target.value;
         BooksAPI.search(query).then((array) => {
           this.setState({
@@ -25,9 +30,8 @@ class Search extends React.Component{
         });
     }
     handleChange(event, book){
-      this.props.handleChange(event,book)
-      }
-    
+      BooksAPI.update(book, event.target.value)
+    }
 
     render(){
       let books = this.state.search
@@ -61,7 +65,7 @@ class Search extends React.Component{
                           <div className="book-top">
                             <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${src})` }}></div>
                             <div className="book-shelf-changer">
-                              <select value="none" onChange={(e) => this.handleChange(e, book)}>
+                              <select value="none" onChange={(event)=>this.handleChange(event, book)}>
                                 <option value="none" disabled>Move to...</option>
                                 <option value="currentlyReading" >Currently Reading</option>
                                 <option value="wantToRead">Want to Read</option>

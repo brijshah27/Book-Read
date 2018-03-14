@@ -18,6 +18,7 @@ class BooksApp extends React.Component {
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleGetAll = this.handleGetAll.bind(this);
+    this.changeSearch = this.changeSearch.bind(this);
   }
   
   componentDidMount(){    
@@ -25,17 +26,13 @@ class BooksApp extends React.Component {
   }
 
   handleChange(event, book){
-    //console.log("handling change: "+ event.target.value);
-    //console.log("book checker: "+book.id);
     BooksAPI.update(book, event.target.value).then((array) =>{
-      //console.log("response: "+JSON.stringify(array.shelf));
       this.handleGetAll();  
     });
   }
 
   handleGetAll(){
     BooksAPI.getAll().then((array) => {
-      //temp.push(array)
       this.setState({
         showSearchPage:false,
         books : array
@@ -46,13 +43,13 @@ class BooksApp extends React.Component {
 
   render() {
     let book_collection = this.state.books
-    //console.log("response>>>>>>"+JSON.stringify(book_collection))
     return (
         <div className="app">
         {this.state.showSearchPage ? (
+          <Route path='/Search'>
           <Search 
-          handleChange={this.handleChange}
-          />
+          handleChange={this.handleChange}/>
+          </Route>
           ) : (
         <div className="list-books">
           <div className="list-books-title">
@@ -168,7 +165,7 @@ class BooksApp extends React.Component {
               </div>
           </div>
           <div className='open-search'>
-            <Link
+          <Link
               to='/Search'>
               Add a Book
             </Link>
